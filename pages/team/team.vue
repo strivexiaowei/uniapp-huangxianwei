@@ -29,7 +29,10 @@
 			</view>
 			<view class="transverse-line"></view>
 			<view class="team-list-wrap">
-				<view v-for="(item, index) in teamList" :key="index" class="team-list bottom-border">
+				<view v-if="teamList.length === 0" class="empty">
+					<image class="empty-image" src="../../static/images/State_empty.png" mode="aspectFit"></image>
+				</view>
+				<view v-else v-for="(item, index) in teamList" :key="index" class="team-list bottom-border">
 					<navigator :url="'../mediator/mediator?id='+item.id" class="team-box">
 						<image class="team-card-image" :src="getImgUrl(item.original.portrait)" mode="aspectFill"></image>
 						<view class="team-info-wrap">
@@ -104,7 +107,7 @@
 		methods: {
 			getTeamList(pageNo) {
 				uni.request({
-					url: 'api/apiMediatorService/searchMediatorList', //仅为示例，并非真实接口地址。
+					url: 'http://shanxi.tunnel.homolo.org/api/apiMediatorService/searchMediatorList', //仅为示例，并非真实接口地址。
 					method: 'GET',
 					data: {
 						dqbm: '',
@@ -286,7 +289,16 @@
 			}
 		}
 	}
-
+  
+	.empty {
+		padding: 300upx 0 0;
+		display: flex;
+		justify-content: center;
+		.empty-image {
+			width: 158upx;
+			height: 200upx;
+		}
+	}
 	.query-wrap {
 		position: relative;
 		z-index: 999;

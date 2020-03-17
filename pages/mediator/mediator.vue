@@ -51,7 +51,7 @@
 		methods: {
 			getMediator(id) {
 				uni.request({
-					url: 'api/apiMediatorService/getMediatorInfo', //仅为示例，并非真实接口地址。
+					url: 'http://shanxi.tunnel.homolo.org/api/apiMediatorService/getMediatorInfo', //仅为示例，并非真实接口地址。
 					method: 'GET',
 					data: {
 						id

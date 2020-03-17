@@ -9,6 +9,7 @@
 	"app-plus": {
 		"usingComponents": true,
 		"nvueCompiler": "uni-app",
+		"compilerVersion": 3,
 		"splashscreen": {
 			"alwaysShowBeforeRender": true,
 			"waiting": true,
@@ -70,26 +71,5 @@
 	},
 	"mp-toutiao": {
 		"usingComponents": true
-	},
-	"h5": {
-		"router": {
-			"mode": "hash"
-		},
-		"devServer": {
-			"port": 8080,
-			"disableHostCheck": true,
-			"proxy": {
-				"/api": {
-					"target": "http://shanxi.tunnel.homolo.org/",
-					"changeOrigin": true,
-					"secure": false
-				}
-			}
-		},
-		"optimization": {
-			"treeShaking": {
-				"enable": true
-			}
-		}
 	}
 }

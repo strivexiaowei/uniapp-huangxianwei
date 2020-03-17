@@ -50,7 +50,7 @@
 		methods: {
 			getTvDetail(id) {
 				uni.request({
-					url: 'api/helpOutService/getRepeatProgrammeInfo', //仅为示例，并非真实接口地址。
+					url: 'http://shanxi.tunnel.homolo.org/api/helpOutService/getRepeatProgrammeInfo', //仅为示例，并非真实接口地址。
 					method: 'GET',
 					data: {
 						id

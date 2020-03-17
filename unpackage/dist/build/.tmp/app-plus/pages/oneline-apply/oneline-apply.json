@@ -1,0 +1,7 @@
+{
+  "navigationBarBackgroundColor": "#fff",
+  "navigationBarTitleText": "在线申请",
+  "usingComponents": {
+    "simple-address": "/components/simple-address/simple-address"
+  }
+}

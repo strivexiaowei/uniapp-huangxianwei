@@ -1,18 +1,14 @@
 <template>
 	<view class="content">
 		<view class="banner">
-			<swiper class="swiper" :current="index" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval"
+			<swiper class="swiper" @change="changeCurrent" :current="indexNum" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval"
 			 :duration="duration">
-				<swiper-item>
-					<image class="swiper-image" src="../../static/images/home_banner.png" mode="aspectFit"></image>
-				</swiper-item>
-				<swiper-item>
-					<image class="swiper-image" src="../../static/images/home_banner.png" mode="aspectFit"></image>
+				<swiper-item v-for="(item, index) in swiperList" :key="index">
+					<image class="swiper-image" :src="item.url" mode="aspectFit"></image>
 				</swiper-item>
 			</swiper>
 			<view class="swiper-dot-box">
-				<view class="dot active"></view>
-				<view class="dot"></view>
+				<view v-for="(item, index) in swiperList" :key="index" class="dot" :class="{ active: index === indexNum }"></view>
 			</view>
 		</view>
 		<view class="inner">
@@ -29,24 +25,24 @@
 				</view>
 			</view>
 			<view class="sevice-box">
-				<view class="nav-box">
+				<navigator url="../oneline-apply/oneline-apply" class="nav-box">
 					<view class="icon-box">
 						<text class="iconfont mediation icon"></text>
 					</view>
 					<view class="text">在线调解</view>
-				</view>
+				</navigator>
 				<view class="nav-box" style="background-color: #006dff;">
 					<view class="icon-box">
 						<text class="iconfont consulting icon"></text>
 					</view>
 					<view class="text">留言咨询</view>
 				</view>
-				<view class="nav-box" style="background-color: #009cff;">
+				<navigator url="../team/team" class="nav-box" style="background-color: #009cff;">
 					<view class="icon-box">
 						<text class="iconfont team icon"></text>
 					</view>
 					<view class="text">调解队伍</view>
-				</view>
+				</navigator>
 			</view>
 			<view class="title-wrap">
 				<view class="title-left">
@@ -55,12 +51,21 @@
 				</view>
 			</view>
 			<view class="subject-wrap">
-				<navigator class="subject-box">
+				<navigator url="../tvDetail/tvDetail" class="subject-box">
 					<image class="card-image" src="../../static/images/project.png"></image>
 					<view class="text-wrap">
 						<view class="card-title">帮忙有一套</view>
 						<view class="card-text">
 							《帮忙有一套》电视节目预告、回访及直播。
+						</view>
+					</view>
+				</navigator>
+				<navigator class="subject-box">
+					<image class="card-image" src="../../static/images/project.png"></image>
+					<view class="text-wrap">
+						<view class="card-title">金融调解</view>
+						<view class="card-text">
+							金融调解专题模块，包含金融资讯、人员推荐、金融在线调解。
 						</view>
 					</view>
 				</navigator>
@@ -75,9 +80,9 @@
 			return {
 				indicatorDots: false,
 				autoplay: true,
-				interval: 2000,
+				interval: 3000,
 				duration: 500,
-				index: 0,
+				indexNum: 0,
 				swiperList: [{
 						name: '',
 						url: '../../static/images/home_banner.png'
@@ -93,7 +98,9 @@
 
 		},
 		methods: {
-
+      changeCurrent(e) {
+				this.indexNum = e.detail.current;
+			}
 		}
 	}
 </script>
@@ -169,7 +176,7 @@
 		padding: 40upx 0 32upx;
 		text-align: center;
 		background-color: #0032e7;
-
+    box-shadow: 0 0 8upx rgba(#0032e7, .4);
 		.icon-box {
 			display: flex;
 			justify-content: center;
@@ -194,6 +201,7 @@
 
 	.subject-wrap {
 		.subject-box {
+			margin-bottom: 20upx;
 			padding: 30upx;
 			display: flex;
 			background-color: #f5f6fa;
