@@ -13,13 +13,22 @@
 			</picker>
 		</view>
 		<view class="form-item bottom-border active">
-			<label @click="openAddres" class="form-item-ceil">
+			<picker mode="multiSelector" @change="cityPickerChange" @columnchange="cityPickerColumnChange" :range="addressOptions" :value="addresIndex" range-key="name">
+				<label class="form-item-ceil">
+					<view class="item-ceil-left">案发区域</view>
+					<view class="item-ceil-db">
+						<view v-if="addressData.length > 0" class="uni-input">{{ addressData[addresIndex[0]].name + ',' + addressData[addresIndex[0]].children[addresIndex[1]].name + ',' + addressData[addresIndex[0]].children[addresIndex[1]].children[addresIndex[2]].name }}</view>
+						<view class="iconfont arrow-right icon"></view>
+					</view>
+				</label>
+			</picker>
+			<!-- 	<label @click="openAddres" class="form-item-ceil">
 				<view class="item-ceil-left">案发区域</view>
 				<view class="item-ceil-db">
 					<view class="uni-input">{{ pickerText }}</view>
 					<view class="iconfont arrow-right icon"></view>
 				</view>
-			</label>
+			</label> -->
 		</view>
 		<view class="form-item bottom-border">
 			<label class="form-item-ceil">
@@ -96,26 +105,29 @@
 			</label>
 		</view>
 		<view class="btn-wrap"><button @click="submit" type="primary" class="btn">提交</button></view>
-		<simple-address ref="simpleAddress" :pickerValueDefault="cityPickerValueDefault" @onConfirm="onConfirm" themeColor="#007AFF"></simple-address>
+		<!-- <simple-address ref="simpleAddress" :pickerValueDefault="cityPickerValueDefault" @onConfirm="onConfirm" themeColor="#007AFF"></simple-address> -->
 	</view>
 </template>
 <script>
-import simpleAddress from '@/components/simple-address/simple-address.nvue';
-import areaData from '@/components/simple-address/city-data/area.js';
-import cityData from '@/components/simple-address/city-data/city.js';
-import provinceData from '@/components/simple-address/city-data/province.js';
+// import simpleAddress from '@/components/simple-address/simple-address.nvue';
+// import areaData from '@/components/simple-address/city-data/area.js';
+// import cityData from '@/components/simple-address/city-data/city.js';
+// import provinceData from '@/components/simple-address/city-data/province.js';
 export default {
-	components: {
-		simpleAddress
-	},
+	// components: {
+	// 	simpleAddress
+	// },
 	data() {
 		return {
 			disputeTypeOption: [],
 			disputeTypeIndex: 0,
-			cityPickerValueDefault: [0, 0, 1],
+			addresIndex: [0, 0, 0],
 			pickerText: '',
 			codeText: '获取验证码',
 			flag: false,
+			addressModal: false,
+			addressData: [],
+			addressOptions: [[], [], []],
 			formData: {
 				disputeType: undefined,
 				address: undefined,
@@ -130,15 +142,11 @@ export default {
 		};
 	},
 	onLoad() {
-		this.getDisputeType();
 		this.formData = { ...uni.getStorageSync('storage_key') };
-		console.log(this.formData);
+		this.getAddressData();
+		this.getDisputeType();
 	},
 	methods: {
-		bindPickerChange(e) {
-			console.log('picker发送选择改变，携带值为', e.target.value);
-			this.index = e.target.value;
-		},
 		disputeTypeChange(e) {
 			console.log(e);
 			this.disputeTypeIndex = e.target.value;
@@ -161,16 +169,17 @@ export default {
 			});
 		},
 		submit() {
+			console.log(this.formData);
 			const volid = this.formValidation();
-			if(!volid) {
-				return
+			if (!volid) {
+				return;
 			}
 			uni.setStorageSync('storage_key', this.formData);
 			console.log(this.formData);
-		  uni.showToast({
-		      title: '提交成功',
-		      duration: 2000
-		  });
+			uni.showToast({
+				title: '提交成功',
+				duration: 2000
+			});
 		},
 		formValidation() {
 			const { formData } = this;
@@ -186,7 +195,7 @@ export default {
 				['code', '验证码']
 			]);
 			for (let [key, value] of validation.entries()) {
-				if(!formData[key]) {
+				if (!formData[key]) {
 					uni.showToast({
 						icon: 'none',
 						title: validation.get(key) + '不能为空'
@@ -196,18 +205,22 @@ export default {
 			}
 			return true;
 		},
-		openAddres() {
-			this.$refs.simpleAddress.open();
-		},
-		onConfirm(e) {
-			this.pickerText = e.label;
-			this.formData.address = e.areaCode;
+		cityPickerChange(e) {
+			console.log(e);
+			const { value } = e.detail;
+			console.log(value);
+			const { addressOptions } = this;
+			this.formData.address = [
+				addressOptions[0][value[0]].code,
+				addressOptions[1][value[1]].code,
+				addressOptions[2][value[2]].code
+			];
 		},
 		getCode() {
 			uni.showModal({
-				title: '验证码已发送，请注意查收',
-				content: null,
+				content: '验证码已发送，请注意查收',
 				showCancel: false,
+				confirmColor: '#056efe',
 				success: () => {
 					if (this.flag) {
 						return;
@@ -241,22 +254,53 @@ export default {
 				this.disputeTypeIndex = 0;
 				this.formData.disputeType = this.disputeTypeOption[0].value;
 			}
-			if (address) {
-				console.log(address.substring(0, 2));
-				const provinceCode = address.substring(0, 2);
-				const cityCode = address.substring(0, 4);
-				const areaCode = address;
-				console.log(areaData);
-				const provinceNum = provinceData.findIndex(item => item.value === provinceCode);
-				const cityNum = cityData[provinceNum].findIndex(item => item.value === cityCode);
-				const areaNum = areaData[provinceNum][cityNum].findIndex(item => item.value === areaCode);
-				this.cityPickerValueDefault = [provinceNum, cityNum, areaNum];
-				console.log(this.cityPickerValueDefault);
-				this.pickerText = provinceData[provinceNum].label + '-' + cityData[provinceNum][cityNum].label + '-' + areaData[provinceNum][cityNum][areaNum].label;
-			} else {
-				this.formData.address = '110101';
-				this.pickerText = provinceData[0].label + '-' + cityData[0][0].label + '-' + areaData[0][0][1].label;
+		},
+		getAddressData() {
+			uni.request({
+				url: 'http://shanxi.tunnel.homolo.org/service/rest/tk.Zone/086/tree',
+				method: 'GET',
+				success: res => {
+					this.addressData = [...res.data.children];
+					const { disputeType, address } = this.formData;
+					if (address) {
+						console.log(this.addressData);
+						const firstIndex = this.addressData.findIndex(item => item.code === address[0]);
+						console.log(firstIndex);
+						const twoIndex = this.addressData[firstIndex].children.findIndex(item => item.code === address[1]);
+						const threeIndex = this.addressData[firstIndex].children[twoIndex].children.findIndex(item => item.code === address[2]);
+						this.addresIndex = [firstIndex, twoIndex, threeIndex]
+					}
+					const {addresIndex, addressData} = this;
+					this.addressOptions = [
+						addressData,
+						addressData[addresIndex[0]].children,
+						addressData[addresIndex[0]].children[addresIndex[1]].children
+					];
+					this.formData.address = [
+						this.addressOptions[0][addresIndex[0]].code,
+						this.addressOptions[1][addresIndex[1]].code,
+						this.addressOptions[2][addresIndex[2]].code
+					];
+				}
+			});
+		},
+		cityPickerColumnChange(e) {
+			console.log(e);
+			const { column, value } = e.detail;
+			const { addressData, addresIndex } = this;
+			addresIndex[column] = value;
+			if(column === 0) {
+				addresIndex[1] = 0;
+				addresIndex[2] = 0;
+			} else if(column === 1) {
+				addresIndex[2] = 0;
 			}
+			this.addresIndex = [...addresIndex];
+			this.addressOptions = [
+				addressData,
+				addressData[addresIndex[0]].children,
+				addressData[addresIndex[0]].children[addresIndex[1]].children
+			];
 		}
 	}
 };

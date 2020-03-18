@@ -24,7 +24,7 @@
 							</view>
 						</view>
 					</view>
-					<view class="mask"></view>
+					<view @click="showModal = false" class="mask"></view>
 				</view>
 			</view>
 			<view class="transverse-line"></view>
@@ -391,6 +391,8 @@
 		}
 
 		.card-name {
+			padding-bottom: 8upx;
+			line-height: 1;
 			font-size: 40upx;
 			color: $dark-text;
 		}
