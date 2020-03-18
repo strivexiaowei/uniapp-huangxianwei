@@ -17,18 +17,19 @@
 				<label class="form-item-ceil">
 					<view class="item-ceil-left">案发区域</view>
 					<view class="item-ceil-db">
-						<view v-if="addressData.length > 0" class="uni-input">{{ addressData[addresIndex[0]].name + ',' + addressData[addresIndex[0]].children[addresIndex[1]].name + ',' + addressData[addresIndex[0]].children[addresIndex[1]].children[addresIndex[2]].name }}</view>
+						<view v-if="addressData.length > 0" class="uni-input">
+							{{
+								addressData[addresIndex[0]].name +
+									',' +
+									addressData[addresIndex[0]].children[addresIndex[1]].name +
+									',' +
+									addressData[addresIndex[0]].children[addresIndex[1]].children[addresIndex[2]].name
+							}}
+						</view>
 						<view class="iconfont arrow-right icon"></view>
 					</view>
 				</label>
 			</picker>
-			<!-- 	<label @click="openAddres" class="form-item-ceil">
-				<view class="item-ceil-left">案发区域</view>
-				<view class="item-ceil-db">
-					<view class="uni-input">{{ pickerText }}</view>
-					<view class="iconfont arrow-right icon"></view>
-				</view>
-			</label> -->
 		</view>
 		<view class="form-item bottom-border">
 			<label class="form-item-ceil">
@@ -105,18 +106,10 @@
 			</label>
 		</view>
 		<view class="btn-wrap"><button @click="submit" type="primary" class="btn">提交</button></view>
-		<!-- <simple-address ref="simpleAddress" :pickerValueDefault="cityPickerValueDefault" @onConfirm="onConfirm" themeColor="#007AFF"></simple-address> -->
 	</view>
 </template>
 <script>
-// import simpleAddress from '@/components/simple-address/simple-address.nvue';
-// import areaData from '@/components/simple-address/city-data/area.js';
-// import cityData from '@/components/simple-address/city-data/city.js';
-// import provinceData from '@/components/simple-address/city-data/province.js';
 export default {
-	// components: {
-	// 	simpleAddress
-	// },
 	data() {
 		return {
 			disputeTypeOption: [],
@@ -210,11 +203,7 @@ export default {
 			const { value } = e.detail;
 			console.log(value);
 			const { addressOptions } = this;
-			this.formData.address = [
-				addressOptions[0][value[0]].code,
-				addressOptions[1][value[1]].code,
-				addressOptions[2][value[2]].code
-			];
+			this.formData.address = [addressOptions[0][value[0]].code, addressOptions[1][value[1]].code, addressOptions[2][value[2]].code];
 		},
 		getCode() {
 			uni.showModal({
@@ -268,19 +257,11 @@ export default {
 						console.log(firstIndex);
 						const twoIndex = this.addressData[firstIndex].children.findIndex(item => item.code === address[1]);
 						const threeIndex = this.addressData[firstIndex].children[twoIndex].children.findIndex(item => item.code === address[2]);
-						this.addresIndex = [firstIndex, twoIndex, threeIndex]
+						this.addresIndex = [firstIndex, twoIndex, threeIndex];
 					}
-					const {addresIndex, addressData} = this;
-					this.addressOptions = [
-						addressData,
-						addressData[addresIndex[0]].children,
-						addressData[addresIndex[0]].children[addresIndex[1]].children
-					];
-					this.formData.address = [
-						this.addressOptions[0][addresIndex[0]].code,
-						this.addressOptions[1][addresIndex[1]].code,
-						this.addressOptions[2][addresIndex[2]].code
-					];
+					const { addresIndex, addressData } = this;
+					this.addressOptions = [addressData, addressData[addresIndex[0]].children, addressData[addresIndex[0]].children[addresIndex[1]].children];
+					this.formData.address = [this.addressOptions[0][addresIndex[0]].code, this.addressOptions[1][addresIndex[1]].code, this.addressOptions[2][addresIndex[2]].code];
 				}
 			});
 		},
@@ -289,18 +270,14 @@ export default {
 			const { column, value } = e.detail;
 			const { addressData, addresIndex } = this;
 			addresIndex[column] = value;
-			if(column === 0) {
+			if (column === 0) {
 				addresIndex[1] = 0;
 				addresIndex[2] = 0;
-			} else if(column === 1) {
+			} else if (column === 1) {
 				addresIndex[2] = 0;
 			}
 			this.addresIndex = [...addresIndex];
-			this.addressOptions = [
-				addressData,
-				addressData[addresIndex[0]].children,
-				addressData[addresIndex[0]].children[addresIndex[1]].children
-			];
+			this.addressOptions = [addressData, addressData[addresIndex[0]].children, addressData[addresIndex[0]].children[addresIndex[1]].children];
 		}
 	}
 };
