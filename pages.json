@@ -45,6 +45,13 @@
 				"navigationBarBackgroundColor": "#fff",
 				"navigationBarTitleText": "在线申请"
 			}
+		}, {
+			"path": "pages/new-team/new-team",
+			"style": {
+				"navigationBarBackgroundColor": "#fff",
+				"navigationBarTitleText": "调解队伍",
+				"backgroundColor": "#fff"
+			}
 		}
 	],
 	"tabBar": {

@@ -18,13 +18,7 @@
 					<view class="item-ceil-left">案发区域</view>
 					<view class="item-ceil-db">
 						<view v-if="addressData.length > 0" class="uni-input">
-							{{
-								addressData[addresIndex[0]].name +
-									',' +
-									addressData[addresIndex[0]].children[addresIndex[1]].name +
-									',' +
-									addressData[addresIndex[0]].children[addresIndex[1]].children[addresIndex[2]].name
-							}}
+							{{ addressText }}
 						</view>
 						<view class="iconfont arrow-right icon"></view>
 					</view>
@@ -139,6 +133,16 @@ export default {
 		this.getAddressData();
 		this.getDisputeType();
 	},
+	computed:{
+		addressText() {
+			const { addressData, addresIndex } = this;
+			return addressData[addresIndex[0]].name +
+				',' +
+				addressData[addresIndex[0]].children[addresIndex[1]].name +
+				',' +
+				addressData[addresIndex[0]].children[addresIndex[1]].children[addresIndex[2]].name
+		}
+	},
 	methods: {
 		disputeTypeChange(e) {
 			console.log(e);
@@ -206,15 +210,15 @@ export default {
 			this.formData.address = [addressOptions[0][value[0]].code, addressOptions[1][value[1]].code, addressOptions[2][value[2]].code];
 		},
 		getCode() {
+			if (this.flag) {
+				return;
+			}
+			this.flag = true;
 			uni.showModal({
 				content: '验证码已发送，请注意查收',
 				showCancel: false,
 				confirmColor: '#056efe',
 				success: () => {
-					if (this.flag) {
-						return;
-					}
-					this.flag = true;
 					let countIndex = 10;
 					const _this = this;
 					function codeText() {
@@ -223,8 +227,8 @@ export default {
 							_this.codeText = '重新获取';
 							return;
 						}
+						_this.codeText = countIndex + '后重新获取';
 						setTimeout(() => {
-							_this.codeText = countIndex + '后重新获取';
 							countIndex--;
 							codeText();
 						}, 1000);
@@ -250,20 +254,23 @@ export default {
 				method: 'GET',
 				success: res => {
 					this.addressData = [...res.data.children];
-					const { disputeType, address } = this.formData;
-					if (address) {
-						console.log(this.addressData);
-						const firstIndex = this.addressData.findIndex(item => item.code === address[0]);
-						console.log(firstIndex);
-						const twoIndex = this.addressData[firstIndex].children.findIndex(item => item.code === address[1]);
-						const threeIndex = this.addressData[firstIndex].children[twoIndex].children.findIndex(item => item.code === address[2]);
-						this.addresIndex = [firstIndex, twoIndex, threeIndex];
-					}
-					const { addresIndex, addressData } = this;
-					this.addressOptions = [addressData, addressData[addresIndex[0]].children, addressData[addresIndex[0]].children[addresIndex[1]].children];
-					this.formData.address = [this.addressOptions[0][addresIndex[0]].code, this.addressOptions[1][addresIndex[1]].code, this.addressOptions[2][addresIndex[2]].code];
+					this.addressBackPlay();
 				}
 			});
+		},
+		addressBackPlay() {
+			const { disputeType, address } = this.formData;
+			if (address) {
+				console.log(this.addressData);
+				const firstIndex = this.addressData.findIndex(item => item.code === address[0]);
+				console.log(firstIndex);
+				const twoIndex = this.addressData[firstIndex].children.findIndex(item => item.code === address[1]);
+				const threeIndex = this.addressData[firstIndex].children[twoIndex].children.findIndex(item => item.code === address[2]);
+				this.addresIndex = [firstIndex, twoIndex, threeIndex];
+			}
+			const { addresIndex, addressData } = this;
+			this.addressOptions = [addressData, addressData[addresIndex[0]].children, addressData[addresIndex[0]].children[addresIndex[1]].children];
+			this.formData.address = [this.addressOptions[0][addresIndex[0]].code, this.addressOptions[1][addresIndex[1]].code, this.addressOptions[2][addresIndex[2]].code];
 		},
 		cityPickerColumnChange(e) {
 			console.log(e);

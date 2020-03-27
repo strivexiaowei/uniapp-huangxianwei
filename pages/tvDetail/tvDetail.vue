@@ -1,6 +1,8 @@
 <template>
-	<view class="cantent">
-		<video style="width: 100%;" :src="playUrl" :poster="'/api/service/rest/tk.File/' + id + '/view'" controls></video>
+	<view class="content">
+		<view class="video-box">
+			<video style="width: 100%; padding-bottom: 20upx;" :src="playUrl" :poster="'/api/service/rest/tk.File/' + id + '/view'" controls></video>
+		</view>
 		<view class="inner">
 			<view class="title">节目详情</view>
 			<view class="description-list">
@@ -76,6 +78,10 @@
 <style lang="scss">
 	.content {
 		background-color: #f5f5f5;
+	}
+	
+	.video-box {
+		padding-bottom: .2upx;
 	}
 	
 	.inner {

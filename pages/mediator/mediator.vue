@@ -79,7 +79,7 @@
 <style lang="scss">
 	.content {
 		background-color: $primary;
-		padding: 285upx 60upx;
+		padding: 157upx 60upx;
 	}
 
 	.mediator-info-box {
