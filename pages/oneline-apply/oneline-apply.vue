@@ -17,9 +17,7 @@
 				<label class="form-item-ceil">
 					<view class="item-ceil-left">案发区域</view>
 					<view class="item-ceil-db">
-						<view v-if="addressData.length > 0" class="uni-input">
-							{{ addressText }}
-						</view>
+						<view v-if="addressData.length > 0" class="uni-input">{{ addressText }}</view>
 						<view class="iconfont arrow-right icon"></view>
 					</view>
 				</label>
@@ -29,7 +27,7 @@
 			<label class="form-item-ceil">
 				<view class="item-ceil-left">详细地址</view>
 				<view class="item-ceil-db">
-					<input v-model="formData.addressDetail" class="uni-input" focus placeholder="详情信息" />
+					<input v-model="formData.addressDetail" class="uni-input" placeholder="详情信息" />
 					<view class="icon"></view>
 				</view>
 			</label>
@@ -38,7 +36,7 @@
 			<label class="form-item-ceil">
 				<view class="item-ceil-left">纠纷描述</view>
 				<view class="item-ceil-db">
-					<input v-model="formData.disputeDesc" class="uni-input" focus placeholder="详情信息" />
+					<input v-model="formData.disputeDesc" class="uni-input" placeholder="详情信息" />
 					<view class="icon"></view>
 				</view>
 			</label>
@@ -57,7 +55,7 @@
 			<label class="form-item-ceil">
 				<view class="item-ceil-left">姓名</view>
 				<view class="item-ceil-db">
-					<input v-model="formData.respondentName" class="uni-input" focus placeholder="详情信息" />
+					<input v-model="formData.respondentName" class="uni-input" placeholder="详情信息" />
 					<view class="icon"></view>
 				</view>
 			</label>
@@ -66,7 +64,7 @@
 			<label class="form-item-ceil">
 				<view class="item-ceil-left">联系电话</view>
 				<view class="item-ceil-db">
-					<input v-model="formData.respondentTel" type="number" class="uni-input" focus placeholder="详情信息" />
+					<input v-model="formData.respondentTel" type="number" class="uni-input" placeholder="详情信息" />
 					<view class="icon"></view>
 				</view>
 			</label>
@@ -76,7 +74,7 @@
 			<label class="form-item-ceil">
 				<view class="item-ceil-left">姓名</view>
 				<view class="item-ceil-db">
-					<input v-model="formData.proposerName" class="uni-input" focus placeholder="详情信息" />
+					<input v-model="formData.proposerName" class="uni-input" placeholder="详情信息" />
 					<view class="icon"></view>
 				</view>
 			</label>
@@ -85,7 +83,7 @@
 			<label class="form-item-ceil">
 				<view class="item-ceil-left">联系电话</view>
 				<view class="item-ceil-db">
-					<input v-model="formData.proposerTel" type="number" class="uni-input" focus placeholder="详情信息" />
+					<input v-model="formData.proposerTel" type="number" class="uni-input" placeholder="详情信息" />
 					<view class="icon"></view>
 				</view>
 			</label>
@@ -94,12 +92,14 @@
 			<label class="form-item-ceil">
 				<view class="item-ceil-left">验证码</view>
 				<view class="item-ceil-db">
-					<input v-model="formData.code" class="uni-input" focus placeholder="详情信息" />
-					<view @click="getCode" class="go-code">{{ codeText }}</view>
+					<input v-model="formData.code" class="uni-input" placeholder="详情信息" />
+					<view @click="getCode" class="go-code" :class="{ 'disabled': flag }">{{ codeText }}</view>
 				</view>
 			</label>
 		</view>
-		<view class="btn-wrap"><button @click="submit" type="primary" class="btn">提交</button></view>
+		<view class="btn-wrap">
+			<button @click="submit" type="primary" class="btn">提交</button>
+		</view>
 	</view>
 </template>
 <script>
@@ -133,14 +133,13 @@ export default {
 		this.getAddressData();
 		this.getDisputeType();
 	},
-	computed:{
+	computed: {
 		addressText() {
 			const { addressData, addresIndex } = this;
-			return addressData[addresIndex[0]].name +
-				',' +
-				addressData[addresIndex[0]].children[addresIndex[1]].name +
-				',' +
-				addressData[addresIndex[0]].children[addresIndex[1]].children[addresIndex[2]].name
+			const provinceName = addressData[addresIndex[0]].name;
+			const cityName = addressData[addresIndex[0]].children[addresIndex[1]].name;
+			const districtName = addressData[addresIndex[0]].children[addresIndex[1]].children[addresIndex[2]].name;
+			return provinceName + ',' + cityName + ',' + districtName;
 		}
 	},
 	methods: {
@@ -207,7 +206,11 @@ export default {
 			const { value } = e.detail;
 			console.log(value);
 			const { addressOptions } = this;
-			this.formData.address = [addressOptions[0][value[0]].code, addressOptions[1][value[1]].code, addressOptions[2][value[2]].code];
+			this.formData.address = [
+				addressOptions[0][value[0]].code, 
+				addressOptions[1][value[1]].code, 
+				addressOptions[2][value[2]].code
+				];
 		},
 		getCode() {
 			if (this.flag) {
@@ -253,7 +256,23 @@ export default {
 				url: 'http://shanxi.tunnel.homolo.org/service/rest/tk.Zone/086/tree',
 				method: 'GET',
 				success: res => {
-					this.addressData = [...res.data.children];
+					const dataArr = ['710000', '810000', '820000'];
+					const addressNormal = res.data.children.filter(item => !dataArr.includes(item.code));
+					const addressAbnormal = res.data.children
+					.filter(item => dataArr.includes(item.code)).map(item => {
+						return {
+							...item,
+							children: [ 
+								{ 
+									...item,
+									children: [
+										{ ...item }
+									]
+								}
+							],
+						};
+					});
+					this.addressData = [...addressNormal, ...addressAbnormal];
 					this.addressBackPlay();
 				}
 			});
@@ -269,8 +288,16 @@ export default {
 				this.addresIndex = [firstIndex, twoIndex, threeIndex];
 			}
 			const { addresIndex, addressData } = this;
-			this.addressOptions = [addressData, addressData[addresIndex[0]].children, addressData[addresIndex[0]].children[addresIndex[1]].children];
-			this.formData.address = [this.addressOptions[0][addresIndex[0]].code, this.addressOptions[1][addresIndex[1]].code, this.addressOptions[2][addresIndex[2]].code];
+			this.addressOptions = [
+				addressData, 
+				addressData[addresIndex[0]].children,
+				addressData[addresIndex[0]].children[addresIndex[1]].children
+			];
+			this.formData.address = [
+				this.addressOptions[0][addresIndex[0]].code, 
+				this.addressOptions[1][addresIndex[1]].code, 
+				this.addressOptions[2][addresIndex[2]].code
+			];
 		},
 		cityPickerColumnChange(e) {
 			console.log(e);
@@ -284,7 +311,13 @@ export default {
 				addresIndex[2] = 0;
 			}
 			this.addresIndex = [...addresIndex];
-			this.addressOptions = [addressData, addressData[addresIndex[0]].children, addressData[addresIndex[0]].children[addresIndex[1]].children];
+			const cityList = addressData[addresIndex[0]].children;
+			const districtList = addressData[addresIndex[0]].children[addresIndex[1]].children;
+			this.addressOptions = [
+				addressData, 
+				cityList ? cityList : [], 
+				districtList ? districtList: []
+			];
 		}
 	}
 };
@@ -349,6 +382,10 @@ export default {
 			padding: 25upx 0;
 			font-size: 32upx;
 			color: $primary;
+			&.disabled {
+				color: #999;
+				cursor: not-allowed;
+			}
 		}
 	}
 }

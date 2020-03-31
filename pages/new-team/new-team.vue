@@ -3,7 +3,7 @@
 		<view class="page-tobar">
 			<uni-search-bar placeholder="查找调解员" bgColor="#f5f5f5" radius="0" @confirm="search" @cancel="cancel"></uni-search-bar>
 			<view class="sl-filter-wrap">
-				<sl-filter :ref="'slFilter'" :independence="true" :color="titleColor" :themeColor="themeColor" :menuList.sync="menuList" @result="result"></sl-filter>
+				<sl-filter :ref="'slFilter'" :color="titleColor" :themeColor="themeColor" :menuList="menuList" @result="result"></sl-filter>
 			</view>
 		</view>
 		<view class="transverse-line"></view>
@@ -102,16 +102,24 @@ export default {
 							value: ''
 						},
 						{
-							title: '一年',
-							value: '1'
+							title: '1年以下',
+							value: '<1'
 						},
 						{
-							title: '二年',
-							value: '2'
+							title: '1到3年',
+							value: '1-3'
 						},
 						{
-							title: '三年',
-							value: '3'
+							title: '3到5年',
+							value: '3-5'
+						},
+						{
+							title: '5到10年',
+							value: '5-10'
+						},
+						{
+							title: '10年以上',
+							value: '>10'
 						}
 					]
 				}

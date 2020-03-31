@@ -14,18 +14,12 @@
 				</view>
 			</view>
 			<view class="sevice-box">
-				<navigator url="../oneline-apply/oneline-apply" class="nav-box">
-					<view class="icon-box"><text class="iconfont mediation icon"></text></view>
-					<view class="text">在线调解</view>
-				</navigator>
-				<view class="nav-box" style="background-color: #006dff;">
-					<view class="icon-box"><text class="iconfont consulting icon"></text></view>
-					<view class="text">留言咨询</view>
-				</view>
-				<navigator url="../new-team/new-team" class="nav-box" style="background-color: #009cff;">
-					<view class="icon-box"><text class="iconfont team icon"></text></view>
-					<view class="text">调解队伍</view>
-				</navigator>
+				<block v-for="(item, index) in navList" :key="index">
+					<navigator :url="item.url" class="nav-box" :style="{ 'background-color': item.bgColor }">
+						<view class="icon-box"><text class="iconfont icon" :class="[item.icon]"></text></view>
+						<view class="text">{{ item.name }}</view>
+					</navigator>
+				</block>
 			</view>
 			<view class="title-wrap">
 				<view class="title-left">
@@ -38,14 +32,11 @@
 					<image class="card-image" src="../../static/images/project.png"></image>
 					<view class="text-wrap">
 						<view class="card-title">帮忙有一套</view>
-						<view class="card-text">《帮忙有一套》电视节目预告、回访及直播。</view>
-					</view>
-				</navigator>
-				<navigator class="subject-box">
-					<image class="card-image" src="../../static/images/project.png"></image>
-					<view class="text-wrap">
-						<view class="card-title">金融调解</view>
-						<view class="card-text">金融调解专题模块，包含金融资讯、人员推荐、金融在线调解。</view>
+						<view class="card-text-wrap">
+							<view class="card-text">
+								《帮忙有一套》电视节目预告、回访及直播。
+							</view>
+						</view>
 					</view>
 				</navigator>
 			</view>
@@ -70,6 +61,20 @@ export default {
 				{
 					name: '',
 					url: '../../static/images/home_banner.png'
+				}
+			],
+			navList: [
+				{
+					name: '在线调解',
+					url: '../oneline-apply/oneline-apply',
+					bgColor: '#0032e7',
+					icon: 'mediation'
+				},
+				{
+					name: '调解队伍',
+					url: '../new-team/new-team',
+					bgColor: '#009cff',
+					icon: 'team'
 				}
 			]
 		};
@@ -152,10 +157,9 @@ export default {
 }
 
 .nav-box {
-	width: calc((100% - 40upx) / 3);
+	width: calc((100% - 20upx) / 2);
 	padding: 40upx 0 32upx;
 	text-align: center;
-	background-color: #0032e7;
 	box-shadow: 0 0 8upx rgba(#0032e7, 0.4);
 	.icon-box {
 		display: flex;
@@ -196,6 +200,7 @@ export default {
 			display: flex;
 			flex-direction: column;
 			padding-left: 24upx;
+			overflow: hidden;
 		}
 
 		.card-title {
@@ -206,11 +211,19 @@ export default {
 			overflow: hidden;
 			word-break: break-all;
 		}
-
-		.card-text {
+    .card-text-wrap {
 			flex: 1;
 			display: flex;
 			align-items: center;
+		}
+		.card-text {
+			text-overflow: -o-ellipsis-lastline;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+			-webkit-box-orient: vertical;
 			color: $light-text;
 			font-size: 28upx;
 		}

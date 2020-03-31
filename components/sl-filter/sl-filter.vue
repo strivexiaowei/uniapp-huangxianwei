@@ -110,7 +110,7 @@
 		},
 		// #endif
 
-		// #ifdef H5
+		// #ifdef H5 || APP-VUE
 		created: function() {
 			let arr = [];
 			let titleArr = [];
