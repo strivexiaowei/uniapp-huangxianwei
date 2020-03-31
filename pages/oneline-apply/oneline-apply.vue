@@ -92,7 +92,7 @@
 			<label class="form-item-ceil">
 				<view class="item-ceil-left">验证码</view>
 				<view class="item-ceil-db">
-					<input v-model="formData.code" class="uni-input" placeholder="详情信息" />
+					<input v-model="formData.code" class="uni-input" placeholder="手机验证码" />
 					<view @click="getCode" class="go-code" :class="{ 'disabled': flag }">{{ codeText }}</view>
 				</view>
 			</label>
@@ -174,7 +174,13 @@ export default {
 			console.log(this.formData);
 			uni.showToast({
 				title: '提交成功',
-				duration: 2000
+				success: () => {
+					setTimeout(() => {
+						uni.navigateBack({
+							delta: 1
+						})
+					}, 1000)
+				}
 			});
 		},
 		formValidation() {
